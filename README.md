@@ -33,3 +33,17 @@ public String fallbackHi() {
 	return "Service is not responding! Please try after sometime.";
 }
   ```
+### Decide on when to break a circuit
+When does the circuit should break? and when should the calls be sent again? We can configure this by taking into consideration of different parameters as listed below
+- Timeout a request after p seconds
+- Consider for last n request
+- m out of n requests are failed
+- After t seconds(sleep window) the client should agian start sending the requests
+```java
+commandProperties = {
+	@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "2000"),
+	@HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "5"),
+	@HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "50"),
+	@HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000") }
+```
+The above example considers a request timeout of 2secs. If among the last 5 requests, 50% of requests are failed to respond then circuit is broken. The client will again start sending the request after 5 secs(sleep window).
