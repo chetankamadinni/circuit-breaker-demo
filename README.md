@@ -46,4 +46,28 @@ commandProperties = {
 	@HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "50"),
 	@HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000") }
 ```
-The above example considers a request timeout of 2secs. If among the last 5 requests, 50% of requests are failed to respond then circuit is broken. The client will again start sending the request after 5 secs(sleep window).
+The above example considers a request timeout of 2secs. If among the last 5 requests, 50% of requests are failed to respond then circuit is broken. The client will again start sending the request after 5 secs(sleep window). You can test this behavior by bringing down the service and making the calls to client application.
+
+### Configure Hystrix Dashboard
+To monitor all these requests, hystrix provides a dashboard. To configure the dashboard add the below dependency
+```xml
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-netflix-hystrix-dashboard</artifactId>
+	<version>2.2.2.RELEASE</version>
+</dependency>
+```
+Make sure your pom has actuator dependency as well. Hystrix dashboard uses actuator
+```xml
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+```
+Add `@EnableHystrixDashboard` annotation to the application class.
+
+Add `management.endpoints.web.exposure.include=*` to the application.properties file.
+
+To access the dashboard hit the app end point with /hystrix. http://localhost:8083/hystrix. As we just using a single hystrix app and not in a cluster.
+Copy the URL http://localhost:8083/actuator/hystrix.stream to the textbox and hit Monitor Stream button. This will give the api call details.
+
