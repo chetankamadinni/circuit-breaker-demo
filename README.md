@@ -71,3 +71,13 @@ Add `management.endpoints.web.exposure.include=*` to the application.properties 
 To access the dashboard hit the app end point with /hystrix. http://localhost:8083/hystrix. As we just using a single hystrix app and not in a cluster.
 Copy the URL http://localhost:8083/actuator/hystrix.stream to the textbox and hit Monitor Stream button. This will give the api call details.
 
+### Bulk head pattern
+Here in this pattern we can give each api with a dedicated threadpool which will not collide with other apis.
+To configure bulk head, you can provide below properties to `@HystrixCommand`
+```java
+@HystrixCommand(fallbackMethod = "fallbackHi", threadPoolKey = "hiServicePool", threadPoolProperties = {
+	@HystrixProperty(name = "coreSize", value = "20"),
+	@HystrixProperty(name = "maxQueueSize", value = "10") })
+```
+Each threadpool can again be configured with the coreSixe(max threads allocated) and maxQueueSize(requests that can be saved to the queue)
+
